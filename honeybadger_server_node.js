@@ -19,6 +19,11 @@ var request			= '';
 var response		= '';
 var req_query		= '';
 
+/**
+ * List of services that Honeybadger will support
+ */
+var registeredServices = {'twitter': twitterService};
+
 http.createServer(function (req, res) {
 	request = req;
 	response = res;
@@ -38,8 +43,25 @@ console.log('Server running at http://'+process.argv[2]+':'+process.argv[3]+'/')
  * @param object res Response object for the http server
  */
 function dispatch_get(req, res) {
+	
 	var dl = new node_get(req_query.resource);
 	dl.asString(process_input);
+}
+
+/**
+ * Returns the service object from the list of registered services
+ * If the service is not registered, then it throws an error
+ * 
+ * @throws Error
+ * @param string name Service to return
+ * @return function
+ */
+function get_service(name) {
+	if(registeredServices[name] === undefined) {
+		throw new Error(name + ' is not a valid service');
+	} else {
+		return registeredServices[name];
+	}
 }
 
 /**
@@ -52,13 +74,26 @@ function process_input() {
 		response.writeHead(200, {'Content-Type': 'application/json'});
 	}
 	
-	var inputResponse = JSON.parse(arguments[1]);
+	var inputServiceName = req_query.input;
+	var inputService = get_service(inputServiceName);
 	
+	var inputResponse = JSON.parse(arguments[1]);
+	var output = [];
 	for(var i in inputResponse) {
 		var tweet = inputResponse[i];
-		var as = twitterService.twitterStatusToAS(tweet);
-		response.write(JSON.stringify(as));
-		break;
+		var as = inputService[inputServiceName + 'StatusToAS'](tweet);
+		output.push(as);
 	}
-	response.end()
+	
+	if(req_query.output === undefined) {
+		response.write(JSON.stringify(output));
+	} else {
+		var outputServiceName = req_query.output;
+		var outputService = get_service(outputServiceName);
+	}
+	
+	inputResponse = null;
+	output = null;
+	
+	response.end();
 }

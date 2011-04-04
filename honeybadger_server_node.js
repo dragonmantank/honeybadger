@@ -69,9 +69,9 @@ function get_service(name) {
  */
 function process_input() {
 	if(req_query.debug === undefined) {
-		response.writeHead(200, {'Content-Type': 'text/plain'});
-	} else {
 		response.writeHead(200, {'Content-Type': 'application/json'});
+	} else {
+		response.writeHead(200, {'Content-Type': 'text/plain'});
 	}
 	
 	var inputServiceName = req_query.input;

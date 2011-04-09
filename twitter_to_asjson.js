@@ -15,6 +15,34 @@ fs.readFile('./data/public_timeline.json', 'utf8', function(err, data) {
 });
 */
 
+/**
+ * Converts an ActivityStream into a Twitter Status
+ * 
+ * @param object as
+ * @return object
+ */
+exports.ASToTwitterStatus = function(as) {
+	var tweet = {};
+	return tweet;
+}
+
+/**
+ * Returns only the elements that are needed for processing
+ * Twitter returns the type of output we need, so just returns
+ * 
+ * @param object input
+ * @return object
+ */
+exports.getFeed = function(input) {
+	return input;
+}
+
+/**
+ * Converts a Twitter Status into an ActivityStream
+ * 
+ * @param object ts
+ * @return object
+ */
 exports.twitterStatusToAS = function(ts) {
 
 	var as = {
